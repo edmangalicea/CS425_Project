@@ -3,8 +3,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 
 public class MainFrame extends JFrame {
@@ -19,6 +17,8 @@ public class MainFrame extends JFrame {
     private JPanel mainPanel;
     private JButton buttonOk;
     private JButton buttonClear;
+    private JButton mainMenuButton;
+
 
     public MainFrame(){
         setContentPane(mainPanel);
@@ -68,9 +68,12 @@ public class MainFrame extends JFrame {
          //               System.out.println(resultSet.getString("Name"));
        //             }
        //             insert.setString(1, name);
+                    connection.close();
+                    insert.close();
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+
 
 
             }
@@ -87,11 +90,19 @@ public class MainFrame extends JFrame {
                 tfRewards.setText(" ");
             }
         });
-    }
-    public static void main(String[] args) {
+        mainMenuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-        MainFrame myFrame = new MainFrame();
+                new inventory();
+                dispose();
+
+
+
+            }
+        });
     }
+
 
 
 }

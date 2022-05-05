@@ -8,6 +8,14 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
+
+        MainFrame myFrame = new MainFrame();
+
+
+
+
+
+        /*
         System.out.println("Hello world!");
         System.out.println("hey");
         try {
@@ -20,6 +28,8 @@ public class Main {
         }catch (Exception e){
             e.printStackTrace();
         }
+        */
+
 
     }
 
