@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.sql.*;
 
 public class inventory extends JFrame {
@@ -28,41 +29,8 @@ public class inventory extends JFrame {
         setSize(1900,400);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+        updateTable();
 
-            try {
-            //  Class.forName("com.mysql.jdbc.Driver");
-            Connection   connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS425", "root", "Prometheus12");
-            //    Statement  insert = connection.createStatement();
-            //   ResultSet result = insert.executeQuery("select * from Customer");
-
-            String query = "SELECT * FROM Product";
-
-            Statement stm = connection.createStatement();
-            ResultSet result = stm.executeQuery(query);
-            DefaultTableModel tableModel = new DefaultTableModel(new String[]{"ProductID", "UPC", "ProductName", "Price", "Quantity", "Category","BrandID","VendorID","StoreID"},0);
-            while(result.next()){
-                String productid = result.getString("ProductID");
-                String upc = result.getString("UPC");
-                String productname = result.getString("ProductName");
-                String price = result.getString("Price");
-                String quantity = result.getString("Quantity");
-                String category = result.getString("Category");
-                String brand = result.getString("BrandID");
-                String vendor = result.getString("VendorID");
-                String store = result.getString("StoreID");
-
-                tableModel.addRow(new Object[]{productid,upc,productname,price,quantity,category,brand,vendor,store});
-
-            }
-
-            table1.setModel(tableModel);
-            connection.close();
-            stm.close();
-
-        }catch (Exception e){
-            // System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
 
 
         insertButton.addActionListener(new ActionListener() {
@@ -134,6 +102,7 @@ public class inventory extends JFrame {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                updateTable();
             }
         });
         btnMainmenu.addActionListener(new ActionListener() {
@@ -143,7 +112,93 @@ public class inventory extends JFrame {
                 dispose();
             }
         });
+        clearEntriesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tfProductID.setText(" ");
+                tfUPC.setText(" ");
+                tfProductName.setText(" ");
+                tfPrice.setText(" ");
+                tfQuantity.setText(" ");
+                tfCategory.setText(" ");
+                tfBrandID.setText(" ");
+                tfVendorID.setText(" ");
+                tfStoreID.setText(" ");
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateTable();
+            }
+        });
+        deleteButton.addComponentListener(new ComponentAdapter() {
+        });
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent j) {
+            //    DefaultTableModel tableModel = (DefaultTableModel) table1.getModel();
+
+                int row = table1.getSelectedRow();
+                String cell = table1.getModel().getValueAt(row, 0).toString();
+                String query = "DELETE FROM Product where ProductID = " + cell;
+                try{
+                    Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS425", "root", "Prometheus12");
+
+                    PreparedStatement delete = connection.prepareStatement(query);
+                    delete.execute();
+                    updateTable();
+                    connection.close();
+                    delete.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+
+
+
+            }
+        });
     }
+
+
+    private void updateTable(){
+            try {
+                //  Class.forName("com.mysql.jdbc.Driver");
+                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS425", "root", "Prometheus12");
+                //    Statement  insert = connection.createStatement();
+                //   ResultSet result = insert.executeQuery("select * from Customer");
+
+                String query = "SELECT * FROM Product";
+
+                Statement stm = connection.createStatement();
+                ResultSet result = stm.executeQuery(query);
+                DefaultTableModel tableModel = new DefaultTableModel(new String[]{"ProductID", "UPC", "ProductName", "Price", "Quantity", "Category", "BrandID", "VendorID", "StoreID"}, 0);
+                while (result.next()) {
+                    String productid = result.getString("ProductID");
+                    String upc = result.getString("UPC");
+                    String productname = result.getString("ProductName");
+                    String price = result.getString("Price");
+                    String quantity = result.getString("Quantity");
+                    String category = result.getString("Category");
+                    String brand = result.getString("BrandID");
+                    String vendor = result.getString("VendorID");
+                    String store = result.getString("StoreID");
+
+                    tableModel.addRow(new Object[]{productid, upc, productname, price, quantity, category, brand, vendor, store});
+
+                }
+
+                table1.setModel(tableModel);
+                connection.close();
+                stm.close();
+
+            } catch (Exception e) {
+                // System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
 
 
 }
