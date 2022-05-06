@@ -1,9 +1,8 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.*;
 
 public class inventory extends JFrame {
     private JPanel inventoryPanel;
@@ -20,7 +19,8 @@ public class inventory extends JFrame {
     private JButton insertButton;
     private JButton deleteButton;
     private JButton refreshButton;
-    private JButton backButton;
+    private JButton btnMainmenu;
+    private JButton clearEntriesButton;
 
     public inventory(){
         setContentPane(inventoryPanel);
@@ -28,6 +28,41 @@ public class inventory extends JFrame {
         setSize(1900,400);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+
+            try {
+            //  Class.forName("com.mysql.jdbc.Driver");
+            Connection   connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS425", "root", "Prometheus12");
+            //    Statement  insert = connection.createStatement();
+            //   ResultSet result = insert.executeQuery("select * from Customer");
+
+            String query = "SELECT * FROM Product";
+
+            Statement stm = connection.createStatement();
+            ResultSet result = stm.executeQuery(query);
+            DefaultTableModel tableModel = new DefaultTableModel(new String[]{"ProductID", "UPC", "ProductName", "Price", "Quantity", "Category","BrandID","VendorID","StoreID"},0);
+            while(result.next()){
+                String productid = result.getString("ProductID");
+                String upc = result.getString("UPC");
+                String productname = result.getString("ProductName");
+                String price = result.getString("Price");
+                String quantity = result.getString("Quantity");
+                String category = result.getString("Category");
+                String brand = result.getString("BrandID");
+                String vendor = result.getString("VendorID");
+                String store = result.getString("StoreID");
+
+                tableModel.addRow(new Object[]{productid,upc,productname,price,quantity,category,brand,vendor,store});
+
+            }
+
+            table1.setModel(tableModel);
+            connection.close();
+            stm.close();
+
+        }catch (Exception e){
+            // System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
 
 
         insertButton.addActionListener(new ActionListener() {
@@ -49,6 +84,29 @@ public class inventory extends JFrame {
                 PreparedStatement insert;
                 try {
                     connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/CS425", "root", "Prometheus12");
+
+                    insert = connection.prepareStatement("insert into Brands(BrandID)values(?)");
+                    insert.setString(1,brandID);
+                 //   insert.setString(2, points);
+                    insert.executeUpdate();
+
+                    insert = connection.prepareStatement("insert into Vendors(VendorID, BrandID)values(?,?)");
+                    insert.setString(1,vendorID);
+               //     insert.setString(2, points);
+                    insert.setString(2, brandID);
+                    insert.executeUpdate();
+
+
+
+                    insert = connection.prepareStatement("insert into Stores(StoreID)values(?)");
+                    insert.setString(1,storeID);
+                    //     insert.setString(2, points);
+                 //   insert.setString(2, brandID);
+                    insert.executeUpdate();
+
+
+
+
 
                     insert = connection.prepareStatement("insert into Product(ProductID, UPC,ProductName,Price,Quantity,Category,BrandID,VendorID,StoreID)values(?,?,?,?,?,?,?,?,?)");
                     insert.setString(1, productID);
@@ -76,6 +134,13 @@ public class inventory extends JFrame {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+        btnMainmenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new MainMenu();
+                dispose();
             }
         });
     }

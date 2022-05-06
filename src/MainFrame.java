@@ -94,7 +94,7 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                new inventory();
+                new MainMenu();
                 dispose();
 
 

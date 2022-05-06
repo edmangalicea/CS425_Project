@@ -31,11 +31,6 @@ public class CustomerList extends JFrame {
 
             Statement stm = connection.createStatement();
             ResultSet result = stm.executeQuery(query);
-            //    ResultSetMetaData meta = result.getMetaData();
-            //    count = meta.getColumnCount();
-
-            //   DefaultTableModel deTable = (DefaultTableModel) table1.getModel();
-            //   deTable.setRowCount(0);
             DefaultTableModel tableModel = new DefaultTableModel(new String[]{"CustomerID", "Name", "Email", "Address", "ShoppingID", "RewardsID"},0);
             while(result.next()){
                 String customerid = result.getString("CustomerID");
@@ -47,40 +42,12 @@ public class CustomerList extends JFrame {
 
                 tableModel.addRow(new Object[]{customerid,name,email,address,shoppingID,rewardsID});
 
-
-                        /*
-                        Vector loop = new Vector();
-
-                        for(int i = 0; i < count; count++){
-                            loop.add(result.getString("CustomerID"));
-                            loop.add(result.getString("Name"));
-                            loop.add(result.getString("Email"));
-                            loop.add(result.getString("PhoneNumber"));
-                            loop.add(result.getString("Address"));
-                            loop.add(result.getString("ShoppingID"));
-                            loop.add(result.getString("RewardsID"));
-                        }
-                        deTable.addRow(loop);
-                    */
-
-
-
-               // setVisible(true);
             }
-         //   String tableData[] = {name, address};
 
-         //   tableModel.addRow(tableData);
             table1.setModel(tableModel);
-
-
-
-
-            //    connection.close();
-            //     insert.close();
-            //  DefaultTableModel model = new DefaultTableModel(loop, columns)
-
-
-
+            stm.close();
+          //  result.close();
+            connection.close();
         }catch (Exception e){
             // System.out.println(e.getMessage());
             e.printStackTrace();
@@ -91,7 +58,7 @@ public class CustomerList extends JFrame {
         btnRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent d) {
-                new MainFrame();
+                new MainMenu();
                 dispose();
               //  Connection connection;
              //   PreparedStatement insert;
